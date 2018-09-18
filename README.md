@@ -27,7 +27,7 @@ allprojects {
 #### Moudle的Gradle
 
 ```
-implementation 'com.github.DeMonLiu623:DeMon-RxBus:1.3.0'
+implementation 'com.github.DeMonLiu623:DeMon-RxBus:1.0'
 ```
 #### 事件实体
 
