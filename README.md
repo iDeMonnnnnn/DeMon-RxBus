@@ -53,7 +53,7 @@ public class MsgEvent {
 使用Rxlifecycle解决RxJava引起的内存泄漏。  
 通过上下文this绑定订阅者的生命周期即可。  
 
-|绑定|销毁|
+|在xxx绑定|在xxx销毁|
 |--|--|
 |onCreate|onDestory|
 |onStart|onStop|
