@@ -79,6 +79,7 @@ RxBus.getInstance().post(new MsgEvent("Java"));
 ```
 
 #### 粘性事件（Sticky）
+用于解决先发布事件，然后再订阅事件的情况。
 
 ```java
 RxBus.getInstance().toObservableSticky(this, MsgEvent.class).subscribe(new Consumer<MsgEvent>() {
