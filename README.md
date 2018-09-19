@@ -53,9 +53,17 @@ public class MsgEvent {
 使用Rxlifecycle解决RxJava引起的内存泄漏。  
 通过上下文this绑定订阅者的生命周期即可。  
 
+|绑定|销毁|
+|--|--|
+|onCreate|onDestory|
+|onStart|onStop|
+|onResum|onPause|
+|onPause|onStop|
+|onStop|onDestory|
+
 
 ```java
-//建议在onStart()中进行该操作，防止组件（尤其要注意Fragment）被销毁而无法及时收到事件。
+
 RxBus.getInstance().toObservable(this,MsgEvent.class).subscribe(new Consumer<MsgEvent>() {
             @Override
             public void accept(MsgEvent msgEvent) throws Exception {
