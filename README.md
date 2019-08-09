@@ -95,7 +95,7 @@ RxBus.getInstance().toObservableSticky(this, MsgEvent.class).subscribe(new Consu
   RxBus.getInstance().postSticky(new MsgEvent("Java"));
 ```
 ### BUG or 问题
-请E-mail：757454343@qq.com 联系我。
+请在issues留言，定期回复。
 
 
 ### MIT License
