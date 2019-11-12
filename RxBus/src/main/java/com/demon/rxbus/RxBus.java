@@ -1,7 +1,9 @@
 package com.demon.rxbus;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
+import android.util.Log;
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.trello.lifecycle2.android.lifecycle.AndroidLifecycle;
 import com.trello.rxlifecycle2.LifecycleProvider;
@@ -13,6 +15,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -20,12 +23,11 @@ import io.reactivex.subjects.Subject;
 /**
  * @author DeMon
  * @date 2018/9/7
- * @description
+ * @description RxBus，RxJava+Rxlifecycle消息传递
  */
 public class RxBus {
     private volatile static RxBus mDefaultInstance;
     private final Subject<Object> mBus;
-
     private final Map<Class<?>, Object> mStickyEventMap;
 
     private RxBus() {
@@ -51,12 +53,22 @@ public class RxBus {
         mBus.onNext(event);
     }
 
+    public <T> Observable<T> toObservable(LifecycleOwner owner, final Class<T> eventType) {
+        return toObservable(owner, eventType, Lifecycle.Event.ON_DESTROY);
+    }
+
     /**
      * 使用Rxlifecycle解决RxJava引起的内存泄漏
      */
-    public <T> Observable<T> toObservable(LifecycleOwner owner, final Class<T> eventType) {
+    public <T> Observable<T> toObservable(LifecycleOwner owner, Class<T> eventType, Lifecycle.Event event) {
         LifecycleProvider<Lifecycle.Event> provider = AndroidLifecycle.createLifecycleProvider(owner);
-        return mBus.ofType(eventType).compose(provider.<T>bindToLifecycle())
+        return mBus.ofType(eventType).compose(provider.<T>bindUntilEvent(event))
+                .doOnDispose(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        Log.i("RxBus", "RxBus取消订阅");
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -88,14 +100,24 @@ public class RxBus {
         post(event);
     }
 
+    public <T> Observable<T> toObservableSticky(LifecycleOwner owner, final Class<T> eventType) {
+        return toObservableSticky(owner, eventType, Lifecycle.Event.ON_DESTROY);
+    }
+
     /**
      * 根据传递的 eventType 类型返回特定类型(eventType)的 被观察者
      * 使用Rxlifecycle解决RxJava引起的内存泄漏
      */
-    public <T> Observable<T> toObservableSticky(LifecycleOwner owner, final Class<T> eventType) {
+    public <T> Observable<T> toObservableSticky(LifecycleOwner owner, final Class<T> eventType, Lifecycle.Event e) {
         synchronized (mStickyEventMap) {
             LifecycleProvider<Lifecycle.Event> provider = AndroidLifecycle.createLifecycleProvider(owner);
-            Observable<T> observable = mBus.ofType(eventType).compose(provider.<T>bindToLifecycle())
+            Observable<T> observable = mBus.ofType(eventType).compose(provider.<T>bindUntilEvent(e))
+                    .doOnDispose(new Action() {
+                        @Override
+                        public void run() throws Exception {
+                            Log.i("RxBus", "RxBus取消订阅");
+                        }
+                    })
                     .subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());

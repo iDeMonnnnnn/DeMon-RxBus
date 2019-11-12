@@ -1,1 +1,1 @@
-include ':app', ':RxBus'
+include ':RxBus', ':app'
