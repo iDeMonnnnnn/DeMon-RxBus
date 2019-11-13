@@ -62,13 +62,14 @@ public class RxBus {
      */
     public <T> Observable<T> toObservable(LifecycleOwner owner, Class<T> eventType, Lifecycle.Event event) {
         LifecycleProvider<Lifecycle.Event> provider = AndroidLifecycle.createLifecycleProvider(owner);
-        return mBus.ofType(eventType).compose(provider.<T>bindUntilEvent(event))
+        return mBus.ofType(eventType)
                 .doOnDispose(new Action() {
                     @Override
                     public void run() throws Exception {
                         Log.i("RxBus", "RxBus取消订阅");
                     }
                 })
+                .compose(provider.<T>bindUntilEvent(event))
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -111,13 +112,14 @@ public class RxBus {
     public <T> Observable<T> toObservableSticky(LifecycleOwner owner, final Class<T> eventType, Lifecycle.Event e) {
         synchronized (mStickyEventMap) {
             LifecycleProvider<Lifecycle.Event> provider = AndroidLifecycle.createLifecycleProvider(owner);
-            Observable<T> observable = mBus.ofType(eventType).compose(provider.<T>bindUntilEvent(e))
+            Observable<T> observable = mBus.ofType(eventType)
                     .doOnDispose(new Action() {
                         @Override
                         public void run() throws Exception {
                             Log.i("RxBus", "RxBus取消订阅");
                         }
                     })
+                    .compose(provider.<T>bindUntilEvent(e))
                     .subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());

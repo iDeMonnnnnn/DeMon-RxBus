@@ -18,11 +18,12 @@ import kotlinx.android.synthetic.main.fragment_msg.*
 class Msg2Fragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_msg, container,false)
+        return inflater.inflate(R.layout.fragment_msg, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        text.text = "Two Fragment"
         btn.setOnClickListener {
             val msg = MsgEvent("种一棵树最好的时间是十年前，其次是现在。")
             RxBus.getInstance().post(msg)

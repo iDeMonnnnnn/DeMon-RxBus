@@ -2,8 +2,8 @@
 
 >RxBus名字看起来像一个库，但它并不是一个库，而是一种模式，它的思想是使用RxJava来实现了EventBus ，而让你不再需要使用Otto或者GreenRobot的EventBus。——[给 Android开发者的RxJava详解](https://gank.io/post/560e15be2dca930e00da1083)
 
-**基于以上思想，通过封装RxJava2.x而实现的RxBus2.x的事件总线库。**    
-**用于解决进程或者组件间的通信问题。**
+**1. 基于以上思想，通过封装RxJava2.x而实现的RxBus2.x的事件总线库。**    
+**2. 用于解决进程或者组件间的通信问题。**
 
 ### 为什么要使用RxBus？
     如上所说，我们可以通过封装RxJava实现EventBus。 
@@ -11,10 +11,8 @@
     EventBus虽然使用方便，但是在事件的生命周期的处理上需要我们利用订阅者的生命周期去注册和取消注册，这个部分还是略有麻烦之处。 
     而我们可以结合使用RxLifecycle来配置，简化这一步骤。 
 
-### 使用
-框架详解，请查看：[Android 打造RxBus2.x的全面详解](https://blog.csdn.net/DeMonliuhui/article/details/82532078)
 
-#### 工程的Gradle
+### 使用
 
 ```
 allprojects {
@@ -24,76 +22,96 @@ allprojects {
     }
 }
 ```
-#### Moudle的Gradle
 
 ```
-implementation 'com.github.DeMonLiu623:DeMon-RxBus:1.1'
-```
-#### 事件实体
+implementation 'com.github.DeMonLiu623:DeMon-RxBus:1.2'
 
+```
+### RxBus详解
+框架详解，请查看：[Android 打造RxBus2.x的全面详解](https://blog.csdn.net/DeMonliuhui/article/details/82532078)
+
+#### 生命周期
+使用Rxlifecycle控制生命周期解决RxJava引起的内存泄漏。 
+ 
 ```java
-public class MsgEvent {
-    private String msg;
-
-    public MsgEvent(String msg) {
-        this.msg = msg;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-}
+ AndroidLifecycle.createLifecycleProvider(LifecycleOwner owner).<T>bindUntilEvent(Lifecycle.Event event)
 ```
 
-#### 订阅事件
-使用Rxlifecycle解决RxJava引起的内存泄漏。  
-通过上下文this绑定订阅者的生命周期即可。  
+1. LifecycleOwner owner 生命周期所有者，传上下文this。
+2. Lifecycle.Event event 在指定的生命周期事件中结束序列(RxJava)。
 
-|在xxx绑定|在xxx销毁|
+|Lifecycle.Event|对应生命周期|
 |--|--|
-|onCreate|onDestory|
-|onStart|onStop|
-|onResum|onPause|
-|onPause|onStop|
-|onStop|onDestory|
+|ON_CREATE|在onCreate之后|
+|ON_START|在onStart之后|
+|ON_RESUME|在onResume之后|
+|ON_PAUSE|再onPause之前|
+|ON_STOP|在onStop之前|
+|ON_DESTROY|在onDestory之前|
+|ON_ANY|match all events|
 
 
-```java
+>PS：在之前的1.1版本中使用RxLifecycle.bind(lifecycle)去绑定生命周期，实际上使用时发现：
+ 如果组件没有继承RxComponents(如RxActivity)则不会按照预期的相反的生命周期事件中结束序列。  
+ 因此从1.2版本开始使用provider.bindUntilEvent来指明在哪个生命周期事件中结束序列（默认Lifecycle.Event.ON_DESTROY）。
 
-RxBus.getInstance().toObservable(this,MsgEvent.class).subscribe(new Consumer<MsgEvent>() {
-            @Override
-            public void accept(MsgEvent msgEvent) throws Exception {
-                //处理事件
-            }
-        });
-```
-
-#### 发布事件
+#### 消息事件实体
 
 ```java
-RxBus.getInstance().post(new MsgEvent("Java"));
+class MsgEvent(var msg: String)
 ```
 
-#### 粘性事件（Sticky）
+#### 普通消息事件
+
+##### 接收消息事件
+```java
+//Lifecycle.Event.ON_DESTROY
+RxBus.getInstance().toObservable(this, MsgEvent::class.java).subscribe { msg ->
+            //处理消息
+        }
+```
+或者
+```java
+RxBus.getInstance().toObservable(this, MsgEvent::class.java, Lifecycle.Event.ON_PAUSE).subscribe { msg ->
+           //处理消息
+        }
+```
+
+##### 发布消息事件
+
+```java
+RxBus.getInstance().post(MsgEvent("Java"));
+```
+
+#### 粘性消息事件（Sticky）
 用于解决先发布事件，然后再订阅事件的情况。
 
+#####  接收粘性消息事件
 ```java
-RxBus.getInstance().toObservableSticky(this, MsgEvent.class).subscribe(new Consumer<MsgEvent>() {
-            @Override
-            public void accept(MsgEvent msgEvent) throws Exception {
-                //处理事件
-                text.setText(msgEvent.getMsg());
-            }
-        });
+//Lifecycle.Event.ON_DESTROY
+RxBus.getInstance().toObservableSticky(this, StickyMsg::class.java).subscribe { msg ->
+           //处理消息
+        }
+```
+或者
+```java
+RxBus.getInstance().toObservableSticky(this, MsgEvent::class.java, Lifecycle.Event.ON_PAUSE).subscribe { msg ->
+           //处理消息
+        }
 ```
 
+##### 发送粘性消息事件
+
 ```java
-  RxBus.getInstance().postSticky(new MsgEvent("Java"));
+  RxBus.getInstance().postSticky(MsgEvent("Java"));
 ```
+
+### 截图
+
+### 更多
+
+请参考请参考demo app代码。
+
 ### BUG or 问题
 请在issues留言，定期回复。
 

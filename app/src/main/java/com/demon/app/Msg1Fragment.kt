@@ -24,7 +24,7 @@ class Msg1Fragment :Fragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+          text.text = "One Fragment"
         btn.setOnClickListener {
             val msg = MsgEvent("你是怎样，你的世界就是怎样。")
             RxBus.getInstance().post(msg)
