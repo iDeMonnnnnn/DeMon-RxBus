@@ -51,8 +51,8 @@ implementation 'com.github.DeMonLiu623:DeMon-RxBus:1.2'
 |ON_ANY|match all events|
 
 
->PS：在之前的1.1版本中使用RxLifecycle.bind(lifecycle)去绑定生命周期，实际上使用时发现：
- 如果组件没有继承RxComponents(如RxActivity)则不会按照预期的相反的生命周期事件中结束序列。  
+>PS：在之前的1.1版本中使用RxLifecycle.bind(lifecycle)去绑定生命周期，实际上使用时发现：    
+ 如果组件没有继承RxComponents(如RxActivity)则不会按照预期的相反的生命周期事件中结束序列。    
  因此从1.2版本开始使用provider.bindUntilEvent来指明在哪个生命周期事件中结束序列（默认Lifecycle.Event.ON_DESTROY）。
 
 #### 消息事件实体
@@ -89,7 +89,7 @@ RxBus.getInstance().post(MsgEvent("Java"));
 #####  接收粘性消息事件
 ```java
 //Lifecycle.Event.ON_DESTROY
-RxBus.getInstance().toObservableSticky(this, StickyMsg::class.java).subscribe { msg ->
+RxBus.getInstance().toObservableSticky(this, MsgEvent::class.java).subscribe { msg ->
            //处理消息
         }
 ```
@@ -108,6 +108,7 @@ RxBus.getInstance().toObservableSticky(this, MsgEvent::class.java, Lifecycle.Eve
 
 ### 截图
 
+![](https://raw.githubusercontent.com/DeMonLiu623/DeMon-RxBus/master/screen/20191113142401.png)
 ### 更多
 
 请参考请参考demo app代码。
