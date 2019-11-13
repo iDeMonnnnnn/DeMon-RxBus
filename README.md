@@ -108,6 +108,7 @@ RxBus.getInstance().toObservableSticky(this, MsgEvent::class.java, Lifecycle.Eve
 
 ### 截图
 <img src="https://raw.githubusercontent.com/DeMonLiu623/DeMon-RxBus/master/screen/ezgif.com-video-to-gif.gif" alt="这是一张网络图片" height="500" width="300">
+
 ![](https://raw.githubusercontent.com/DeMonLiu623/DeMon-RxBus/master/screen/20191113142401.png)
 
 ### 更多
