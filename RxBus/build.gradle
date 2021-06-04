@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.DeMonLiu623'
+group = 'com.github.DeMonLiu623'
 android {
-    compileSdkVersion 27
+    compileSdkVersion 30
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -23,7 +23,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api 'io.reactivex.rxjava2:rxjava:2.1.17'
-    api 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    api 'com.trello.rxlifecycle2:rxlifecycle-android-lifecycle:2.2.2'
+    compileOnly('io.reactivex.rxjava2:rxjava:2.1.17')
+    compileOnly('io.reactivex.rxjava2:rxandroid:2.0.2')
+    compileOnly('com.trello.rxlifecycle2:rxlifecycle-android-lifecycle:2.2.2')
 }
