@@ -24,7 +24,6 @@ allprojects {
 }
 ```
 
-
 [latest_version](https://github.com/iDeMonnnnnn/DeMon-RxBus/releases)
 ```
     //引入本库
