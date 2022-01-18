@@ -1,16 +1,17 @@
 ## DeMon-RxBus
 
->RxBus名字看起来像一个库，但它并不是一个库，而是一种模式，它的思想是使用RxJava来实现了EventBus ，而让你不再需要使用Otto或者GreenRobot的EventBus。——[给 Android开发者的RxJava详解](https://gank.io/post/560e15be2dca930e00da1083)
+>RxBus名字看起来像一个库，但它并不是一个库，而是一种模式，它的思想是使用RxJava来实现了EventBus，而让你不再需要使用Otto或者GreenRobot的EventBus。
+>——扔物线朱凯：给Android开发者的RxJava详解
 
 **1. 基于以上思想，通过封装RxJava3.x而实现的RxBus3.x的事件总线库。**
 **2. 用于解决进程或者组件间的通信问题。**
 **3. 3.0版本开始基于RxJava3.x,RxJava2.x版本请看[DeMon-RxBus2.x](https://github.com/iDeMonnnnnn/DeMon-RxBus/tree/RxJava2.x)**
 
 ### 为什么要使用RxBus？
-    如上所说，我们可以通过封装RxJava实现EventBus。 
-    随着RxJava在Android项目中的普及, 我们完全可以使用RxBus代替EventBus，减少库的引入，增加系统的稳定性。 
-    EventBus虽然使用方便，但是在事件的生命周期的处理上需要我们利用订阅者的生命周期去注册和取消注册，这个部分还是略有麻烦之处。 
-    而我们可以结合使用RxLifecycle来配置，简化这一步骤。 
+>如上所说，我们可以通过封装RxJava实现EventBus。
+>随着RxJava在Android项目中的普及, 我们完全可以使用RxBus代替EventBus，减少库的引入，增加系统的稳定性。
+>EventBus虽然使用方便，但是在事件的生命周期的处理上需要我们利用订阅者的生命周期去注册和取消注册，这个部分还是略有麻烦之处。
+>而我们可以结合使用RxLifecycle来配置，简化这一步骤。
 
 
 ### 使用
