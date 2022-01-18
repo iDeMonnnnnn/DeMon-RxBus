@@ -20,10 +20,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        RxBus.getInstance().toObservable(this, MsgEvent::class.java, Lifecycle.Event.ON_PAUSE).subscribe { msg ->
+        RxBus.getInstance().toObservable(this, MsgEvent::class.java).subscribe { msg ->
             tvMsg.text = msg.msg
         }
-
 
         btn.setOnClickListener {
             val msg = StickyMsg("不如意事常八九，可与人说无二三。")
@@ -54,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         Log.i("MainActivity", "----onPause-----")
     }
+
     override fun onStop() {
         super.onStop()
         Log.i("MainActivity", "----onStop-----")

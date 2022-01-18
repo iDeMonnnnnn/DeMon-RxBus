@@ -33,14 +33,14 @@ class RxBus private constructor() {
         mBus.onNext(event)
     }
 
-    fun <T> toObservable(owner: LifecycleOwner?, eventType: Class<T>?): Observable<T> {
+    fun <T : Any> toObservable(owner: LifecycleOwner?, eventType: Class<T>): Observable<T> {
         return toObservable(owner, eventType, Lifecycle.Event.ON_DESTROY)
     }
 
     /**
      * 使用Rxlifecycle解决RxJava引起的内存泄漏
      */
-    fun <T> toObservable(owner: LifecycleOwner?, eventType: Class<T>?, event: Lifecycle.Event): Observable<T> {
+    fun <T : Any> toObservable(owner: LifecycleOwner?, eventType: Class<T>, event: Lifecycle.Event): Observable<T> {
         val provider = AndroidLifecycle.createLifecycleProvider(owner)
         return mBus.ofType(eventType)
             .doOnDispose { Log.i("RxBus", "RxBus取消订阅") }
@@ -71,7 +71,7 @@ class RxBus private constructor() {
         post(event)
     }
 
-    fun <T> toObservableSticky(owner: LifecycleOwner?, eventType: Class<T>): Observable<T> {
+    fun <T : Any> toObservableSticky(owner: LifecycleOwner?, eventType: Class<T>): Observable<T> {
         return toObservableSticky(owner, eventType, Lifecycle.Event.ON_DESTROY)
     }
 
@@ -79,7 +79,7 @@ class RxBus private constructor() {
      * 根据传递的 eventType 类型返回特定类型(eventType)的 被观察者
      * 使用Rxlifecycle解决RxJava引起的内存泄漏
      */
-    fun <T> toObservableSticky(owner: LifecycleOwner?, eventType: Class<T>, e: Lifecycle.Event): Observable<T> {
+    fun <T : Any> toObservableSticky(owner: LifecycleOwner?, eventType: Class<T>, e: Lifecycle.Event): Observable<T> {
         synchronized(mStickyEventMap) {
             val provider = AndroidLifecycle.createLifecycleProvider(owner)
             val observable = mBus.ofType(eventType)
@@ -100,14 +100,14 @@ class RxBus private constructor() {
     /**
      * 根据eventType获取Sticky事件
      */
-    fun <T> getStickyEvent(eventType: Class<T>): T {
+    fun <T : Any> getStickyEvent(eventType: Class<T>): T {
         synchronized(mStickyEventMap) { return eventType.cast(mStickyEventMap[eventType]) }
     }
 
     /**
      * 移除指定eventType的Sticky事件
      */
-    fun <T> removeStickyEvent(eventType: Class<T>): T {
+    fun <T : Any> removeStickyEvent(eventType: Class<T>): T {
         synchronized(mStickyEventMap) { return eventType.cast(mStickyEventMap.remove(eventType)) }
     }
 
@@ -121,6 +121,8 @@ class RxBus private constructor() {
     companion object {
         @Volatile
         private var mDefaultInstance: RxBus? = null
+
+        @JvmStatic
         fun getInstance(): RxBus {
             return mDefaultInstance ?: synchronized(RxBus::class.java) {
                 mDefaultInstance ?: RxBus().also { mDefaultInstance = it }
