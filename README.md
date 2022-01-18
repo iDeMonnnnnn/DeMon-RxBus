@@ -1,9 +1,10 @@
-# DeMon-RxBus
+## DeMon-RxBus
 
 >RxBus名字看起来像一个库，但它并不是一个库，而是一种模式，它的思想是使用RxJava来实现了EventBus ，而让你不再需要使用Otto或者GreenRobot的EventBus。——[给 Android开发者的RxJava详解](https://gank.io/post/560e15be2dca930e00da1083)
 
 **1. 基于以上思想，通过封装RxJava3.x而实现的RxBus3.x的事件总线库。**
 **2. 用于解决进程或者组件间的通信问题。**
+**3. 3.0版本开始基于RxJava3.x,RxJava2.x版本请看[DeMon-RxBus2.x](https://github.com/iDeMonnnnnn/DeMon-RxBus/tree/RxJava2.x)**
 
 ### 为什么要使用RxBus？
     如上所说，我们可以通过封装RxJava实现EventBus。 
@@ -23,9 +24,11 @@ allprojects {
 }
 ```
 
+
+[latest_version](https://github.com/iDeMonnnnnn/DeMon-RxBus/releases)
 ```
     //引入本库
-    implementation 'com.github.iDeMonnnnnn:DeMon-RxBus:1.4'
+    implementation 'com.github.iDeMonnnnnn:DeMon-RxBus:$latest_version'
     //1.4开始，compileOnly引用库，增加灵活性，你需要结合自己项目手动引入下面3个库
     //RxJava3.x
     implementation "io.reactivex.rxjava3:rxjava:$rxjava"
